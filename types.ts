@@ -25,10 +25,11 @@ export enum SectionId {
   FAQ = 'faq',
   AI_CHAT = 'ai-chat',
   CONTACT = 'contact',
-  BPO = 'bpo'
+  BPO = 'bpo',
+  TOOLS = 'tools'
 }
 
-export type Page = 'home' | 'terms' | 'privacy' | 'blog' | 'blog-post' | 'login' | 'admin';
+export type Page = 'home' | 'terms' | 'privacy' | 'blog' | 'blog-post' | 'login' | 'admin' | 'onboarding' | 'tool-simples' | 'tool-fatorr' | 'onboarding-process';
 
 export interface BlogSource {
   uri: string;
@@ -64,7 +65,14 @@ export interface WhatsAppStats {
     footer: number;
     blog: number;
     leadMagnet: number;
+    tools: number;
   };
+}
+
+export interface CapturedLead {
+  whatsapp: string;
+  date: string;
+  origin: string;
 }
 
 export interface SiteStats {
@@ -72,6 +80,7 @@ export interface SiteStats {
   sectionClicks: Record<string, number>;
   articleViews: Record<string, number>;
   totalViews: number;
+  leads: CapturedLead[];
 }
 
 export interface WhatsAppConfig {

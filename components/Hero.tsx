@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { SectionId } from '../types';
 import { MessageCircle, ArrowRight, ShieldCheck, Zap, Star, Wand2 } from 'lucide-react';
 
@@ -23,7 +23,7 @@ const Hero: React.FC<HeroProps> = ({ scrollToSection, onWhatsAppClick }) => {
           <div className="flex flex-col items-center mb-8 md:mb-10 animate-fade-in-up">
             <div className="inline-flex items-center gap-2.5 px-4 md:px-6 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-2xl shadow-2xl group hover:border-brand-primary/30 transition-colors cursor-default mb-4">
               <div className="relative">
-                <Zap className="w-3.5 h-3.5 text-brand-primary fill-brand-primary animate-pulse" />
+                < Zap className="w-3.5 h-3.5 text-brand-primary fill-brand-primary animate-pulse" />
                 <div className="absolute inset-0 bg-brand-primary blur-md opacity-50"></div>
               </div>
               <span className="text-[9px] md:text-[10px] font-black text-gray-300 uppercase tracking-[0.2em] md:tracking-[0.35em]">
@@ -41,10 +41,10 @@ const Hero: React.FC<HeroProps> = ({ scrollToSection, onWhatsAppClick }) => {
             </div>
           </div>
 
-          {/* Headline Ultra-Impactante */}
+          {/* Headline Ultra-Impactante Atualizada */}
           <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-black tracking-tighter mb-6 md:mb-8 text-white leading-[1.1] max-w-5xl animate-fade-in-up delay-100 break-words">
-            Escalamos sua Empresa <br className="hidden md:block" /> 
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary via-violet-400 to-brand-accent">Blindando seu Lucro.</span>
+            Escale sua empresa <br className="hidden md:block" /> 
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary via-violet-400 to-brand-accent">Blindamos seu Lucro.</span>
           </h1>
 
           {/* Subheadline estratégica */}

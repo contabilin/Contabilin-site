@@ -1,6 +1,7 @@
+
 import React from 'react';
-import { SectionId } from '../types';
-import { UserPlus, FileSearch, CheckCircle2, Rocket } from 'lucide-react';
+import { SectionId, Page } from '../types';
+import { UserPlus, FileSearch, CheckCircle2, Rocket, ArrowRight, Map } from 'lucide-react';
 
 const steps = [
   {
@@ -25,7 +26,11 @@ const steps = [
   }
 ];
 
-const HowItWorks: React.FC = () => {
+interface HowItWorksProps {
+  onNavigate?: (page: Page) => void;
+}
+
+const HowItWorks: React.FC<HowItWorksProps> = ({ onNavigate }) => {
   return (
     <section id={SectionId.HOW_IT_WORKS} className="py-24 bg-[#0B1120] relative">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -34,7 +39,7 @@ const HowItWorks: React.FC = () => {
           <p className="text-gray-400">Em 4 passos simples você regulariza seu negócio digital.</p>
         </div>
 
-        <div className="relative">
+        <div className="relative mb-20">
           {/* Connector Line (Desktop) */}
           <div className="hidden md:block absolute top-1/2 left-0 w-full h-0.5 bg-gradient-to-r from-transparent via-brand-primary/30 to-transparent -translate-y-1/2 z-0"></div>
 
@@ -57,6 +62,19 @@ const HowItWorks: React.FC = () => {
             ))}
           </div>
         </div>
+
+        {onNavigate && (
+          <div className="flex justify-center">
+            <button 
+              onClick={() => onNavigate('onboarding-process')}
+              className="group flex items-center gap-3 bg-white/5 border border-white/10 hover:border-brand-primary/50 px-8 py-4 rounded-2xl transition-all"
+            >
+              <Map className="w-5 h-5 text-brand-primary" />
+              <span className="text-white font-bold">Ver nossa metodologia completa</span>
+              <ArrowRight className="w-4 h-4 text-gray-500 group-hover:text-brand-primary group-hover:translate-x-1 transition-all" />
+            </button>
+          </div>
+        )}
       </div>
     </section>
   );

@@ -1,6 +1,6 @@
 
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
-import { BlogPost, SiteStats, WhatsAppConfig, PricingConfig, LeadMagnetConfig, SocialMediaConfig, Page } from '../types';
+import { BlogPost, SiteStats, WhatsAppConfig, PricingConfig, LeadMagnetConfig, SocialMediaConfig, Page, CapturedLead } from '../types';
 import { blogPosts as initialBlogPosts } from '../data/blogData';
 import { DEFAULT_SYSTEM_INSTRUCTION } from '../services/geminiService';
 
@@ -8,6 +8,10 @@ interface AppContextType {
   // Page State
   currentPage: Page;
   setCurrentPage: (page: Page) => void;
+  
+  // Selection State
+  selectedPost: BlogPost | null;
+  setSelectedPost: (post: BlogPost | null) => void;
   
   // Auth State
   isAdminAuthenticated: boolean;
@@ -48,6 +52,7 @@ interface AppContextType {
   trackSectionClick: (section: string) => void;
   trackArticleView: (id: string) => void;
   trackWhatsAppClick: (origin: keyof SiteStats['wa']['byOrigin']) => void;
+  addLead: (whatsapp: string, origin: string) => void;
   resetStats: () => void;
 }
 
@@ -61,6 +66,7 @@ const getStored = <T,>(key: string, defaultValue: T): T => {
 
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [currentPage, setCurrentPage] = useState<Page>(() => getStored('contabilin_current_page', 'home') as Page);
+  const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
   const [adminPassword, setAdminPassword] = useState(() => localStorage.getItem('contabilin_admin_pass') || '123');
   
@@ -76,7 +82,13 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [fbPixelId, setFbPixelId] = useState(() => localStorage.getItem('contabilin_fb_pixel') || '');
   const [googleAdsId, setGoogleAdsId] = useState(() => localStorage.getItem('contabilin_google_ads') || '');
   
-  const [siteStats, setSiteStats] = useState<SiteStats>(() => getStored('contabilin_site_stats', { wa: { total: 0, byOrigin: { hero: 0, floating: 0, pricing: 0, simulator: 0, footer: 0, blog: 0, leadMagnet: 0 } }, sectionClicks: {}, articleViews: {}, totalViews: 0 }));
+  const [siteStats, setSiteStats] = useState<SiteStats>(() => getStored('contabilin_site_stats', { 
+    wa: { total: 0, byOrigin: { hero: 0, floating: 0, pricing: 0, simulator: 0, footer: 0, blog: 0, leadMagnet: 0 } }, 
+    sectionClicks: {}, 
+    articleViews: {}, 
+    totalViews: 0,
+    leads: []
+  }));
 
   // Persistence
   useEffect(() => {
@@ -114,15 +126,33 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }));
   }, []);
 
-  const resetStats = () => setSiteStats({ wa: { total: 0, byOrigin: { hero: 0, floating: 0, pricing: 0, simulator: 0, footer: 0, blog: 0, leadMagnet: 0 } }, sectionClicks: {}, articleViews: {}, totalViews: 0 });
+  const addLead = useCallback((whatsapp: string, origin: string) => {
+    const newLead: CapturedLead = {
+      whatsapp,
+      origin,
+      date: new Date().toLocaleString('pt-BR')
+    };
+    setSiteStats(prev => ({
+      ...prev,
+      leads: [newLead, ...(prev.leads || [])]
+    }));
+  }, []);
+
+  const resetStats = () => setSiteStats({ 
+    wa: { total: 0, byOrigin: { hero: 0, floating: 0, pricing: 0, simulator: 0, footer: 0, blog: 0, leadMagnet: 0 } }, 
+    sectionClicks: {}, 
+    articleViews: {}, 
+    totalViews: 0,
+    leads: []
+  });
 
   return (
     <AppContext.Provider value={{
-      currentPage, setCurrentPage, isAdminAuthenticated, setIsAdminAuthenticated, adminPassword, setAdminPassword,
+      currentPage, setCurrentPage, selectedPost, setSelectedPost, isAdminAuthenticated, setIsAdminAuthenticated, adminPassword, setAdminPassword,
       posts, setPosts, pricingConfig, setPricingConfig, leadMagnetConfig, setLeadMagnetConfig,
       socialMediaConfig, setSocialMediaConfig, waConfig, setWaConfig, aiInstruction, setAiInstruction,
       isAiEnabled, setIsAiEnabled, logoUrl, setLogoUrl, gscCode, setGscCode, fbPixelId, setFbPixelId, googleAdsId, setGoogleAdsId,
-      siteStats, trackSectionClick, trackArticleView, trackWhatsAppClick, resetStats
+      siteStats, trackSectionClick, trackArticleView, trackWhatsAppClick, addLead, resetStats
     }}>
       {children}
     </AppContext.Provider>

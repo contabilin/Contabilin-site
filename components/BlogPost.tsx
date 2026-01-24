@@ -1,17 +1,21 @@
 
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { useApp } from '../context/AppContext';
 import { 
   ArrowLeft, MessageCircle, Sparkles, Clock, Calendar, 
-  Linkedin, Instagram, Calculator, CheckCircle2
+  Linkedin, Instagram, Calculator, CheckCircle2, ImageIcon, Check, ArrowRight
 } from 'lucide-react';
+import { Page, SectionId } from '../types';
 
 const BlogPostView: React.FC = () => {
-  const { posts, setCurrentPage, trackWhatsAppClick } = useApp();
+  const { posts, selectedPost, setSelectedPost, setCurrentPage, trackWhatsAppClick, addLead } = useApp();
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const [waInput, setWaInput] = useState('');
+  const [isSubscribed, setIsSubscribed] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
   
-  // Como estamos em uma SPA simples, pegamos o post selecionado (assumimos o primeiro para demo)
-  const post = posts[0]; 
+  const post = selectedPost || posts[0]; 
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -24,10 +28,82 @@ const BlogPostView: React.FC = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, [post]);
 
+  // Interceptador de cliques em links internos injetados via dangerouslySetInnerHTML
+  useEffect(() => {
+    const handleInternalLinks = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const link = target.closest('a');
+      
+      if (link && link.classList.contains('internal-link')) {
+        e.preventDefault();
+        const href = link.getAttribute('href');
+        if (!href) return;
+
+        // Caso 1: Ferramentas
+        if (href.startsWith('/tool-')) {
+          const toolPage = href.substring(1) as Page;
+          setCurrentPage(toolPage);
+        }
+        // Caso 2: Outros posts
+        else if (href.startsWith('/blog/')) {
+          const postId = href.replace('/blog/', '');
+          const targetPost = posts.find(p => p.id === postId);
+          if (targetPost) {
+            setSelectedPost(targetPost);
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        }
+        // Caso 3: Seções da Home
+        else if (href.startsWith('/#')) {
+          const sectionId = href.replace('/#', '') as SectionId;
+          setCurrentPage('home');
+          setTimeout(() => {
+            document.getElementById(sectionId)?.scrollIntoView({ behavior: 'smooth' });
+          }, 100);
+        }
+      }
+    };
+
+    const container = contentRef.current;
+    if (container) {
+      container.addEventListener('click', handleInternalLinks);
+    }
+    return () => {
+      if (container) {
+        container.removeEventListener('click', handleInternalLinks);
+      }
+    };
+  }, [posts, setCurrentPage, setSelectedPost]);
+
   const handleCTA = (origin: string = 'blog-post') => {
     trackWhatsAppClick(origin as any);
     const msg = `Olá! Li o artigo "${post.title}" e gostaria de uma análise para meu CNPJ.`;
     window.open(`https://wa.me/5547989165863?text=${encodeURIComponent(msg)}`, '_blank');
+  };
+
+  const handleSubscribe = () => {
+    if (waInput.trim().length < 8) return;
+    addLead(waInput, `Blog: ${post.title}`);
+    setIsSubscribed(true);
+    setWaInput('');
+    setTimeout(() => setIsSubscribed(false), 5000);
+  };
+
+  const scrollToAnchor = (e: React.MouseEvent, id: string) => {
+    e.preventDefault();
+    const element = document.getElementById(id);
+    if (element) {
+      const offset = 100;
+      const bodyRect = document.body.getBoundingClientRect().top;
+      const elementRect = element.getBoundingClientRect().top;
+      const elementPosition = elementRect - bodyRect;
+      const offsetPosition = elementPosition - offset;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
   };
 
   const [miniRevenue, setMiniRevenue] = useState(15000);
@@ -38,7 +114,7 @@ const BlogPostView: React.FC = () => {
   }, [miniRevenue]);
 
   return (
-    <div className="pt-20 pb-20 bg-[#01040a] min-h-screen text-slate-200">
+    <div className="pt-24 pb-20 bg-[#01040a] min-h-screen text-slate-200">
       <div className="fixed top-20 left-0 w-full h-1 z-[60] bg-white/5">
         <div 
           className="h-full bg-brand-primary shadow-[0_0_10px_rgba(139,92,246,0.5)] transition-all duration-100" 
@@ -46,7 +122,7 @@ const BlogPostView: React.FC = () => {
         ></div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-12">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 md:pt-16">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
           
           <article className="lg:col-span-8 space-y-10">
@@ -58,7 +134,7 @@ const BlogPostView: React.FC = () => {
               Voltar para o Blog
             </button>
 
-            <header className="space-y-6">
+            <header className="space-y-6 relative">
               <div className="flex items-center gap-3">
                 <span className="bg-brand-primary/10 text-brand-primary border border-brand-primary/20 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest">
                   {post.category}
@@ -69,37 +145,40 @@ const BlogPostView: React.FC = () => {
                 </div>
               </div>
 
-              <h1 className="text-4xl md:text-6xl font-black text-white tracking-tighter leading-[1.1]">
+              <h1 className="text-3xl md:text-5xl lg:text-6xl font-black text-white tracking-tighter leading-[1.15]">
                 {post.title}
               </h1>
 
               <div className="flex items-center gap-4 py-6 border-y border-white/5">
-                <div className="w-12 h-12 rounded-full bg-brand-primary/20 border border-brand-primary/30 flex items-center justify-center font-black text-brand-primary uppercase">
+                <div className="w-12 h-12 rounded-full bg-brand-primary/20 border border-brand-primary/30 flex items-center justify-center font-black text-brand-primary uppercase shrink-0">
                   {post.author.charAt(0)}
                 </div>
                 <div>
                   <p className="text-white font-bold text-sm">{post.author}</p>
-                  <p className="text-gray-500 text-xs">Especialista em Engenharia Fiscal</p>
-                </div>
-                <div className="ml-auto flex gap-2">
-                  <button className="p-2 bg-white/5 rounded-lg hover:bg-white/10 transition-colors"><Linkedin size={16} /></button>
-                  <button className="p-2 bg-white/5 rounded-lg hover:bg-white/10 transition-colors"><Instagram size={16} /></button>
+                  <p className="text-gray-500 text-xs">Especialista em Inteligência Fiscal</p>
                 </div>
               </div>
             </header>
 
-            <div className="relative rounded-[2.5rem] overflow-hidden border border-white/10 aspect-video group">
-              <img src={post.imageUrl} alt={post.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-              <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/80 via-transparent to-transparent"></div>
+            <div className="relative rounded-[2.5rem] overflow-hidden border border-white/10 aspect-video group bg-[#0f172a] flex items-center justify-center">
+              <img 
+                src={post.imageUrl} 
+                alt={post.title} 
+                onLoad={() => setImageLoaded(true)}
+                className={`w-full h-full object-cover transition-all duration-700 ${imageLoaded ? 'opacity-100' : 'opacity-0'}`} 
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-brand-dark/80 via-transparent to-transparent pointer-events-none"></div>
             </div>
 
             <div 
+              ref={contentRef}
               className="prose prose-invert prose-lg max-w-none 
                 prose-headings:text-white prose-headings:font-black prose-headings:tracking-tight
+                prose-headings:scroll-mt-24
                 prose-p:text-gray-300 prose-p:leading-relaxed
                 prose-strong:text-brand-primary prose-strong:font-bold
                 prose-ul:text-gray-400 prose-li:my-1
-                prose-img:rounded-3xl prose-img:border prose-img:border-white/10"
+                prose-a:no-underline hover:prose-a:text-white transition-colors"
               dangerouslySetInnerHTML={{ __html: post.content }} 
             />
 
@@ -119,15 +198,11 @@ const BlogPostView: React.FC = () => {
                     <MessageCircle className="w-6 h-6 fill-white" /> Diagnóstico Gratuito agora
                   </button>
                 </div>
-                <div className="w-32 h-32 md:w-48 md:h-48 bg-white/5 rounded-3xl border border-white/10 backdrop-blur-xl flex items-center justify-center transform rotate-6 hover:rotate-0 transition-transform">
-                   <Calculator size={64} className="text-brand-primary" />
-                </div>
               </div>
             </div>
           </article>
 
           <aside className="lg:col-span-4 space-y-8 h-fit lg:sticky lg:top-32">
-            
             <div className="bg-[#1e293b]/50 border border-white/10 rounded-[2rem] p-8 space-y-6 backdrop-blur-xl">
                <div className="flex items-center gap-3 mb-2">
                   <div className="w-10 h-10 bg-brand-primary/20 rounded-xl flex items-center justify-center">
@@ -135,30 +210,18 @@ const BlogPostView: React.FC = () => {
                   </div>
                   <h4 className="text-white font-bold text-sm uppercase tracking-widest">Simulador Rápido</h4>
                </div>
-               
                <div className="space-y-4">
                   <div className="flex justify-between items-end">
                     <span className="text-[10px] text-gray-500 font-black uppercase">Faturamento</span>
                     <span className="text-white font-black text-lg">R$ {miniRevenue.toLocaleString('pt-BR')}</span>
                   </div>
-                  <input 
-                    type="range" 
-                    min="5000" 
-                    max="50000" 
-                    step="1000"
-                    value={miniRevenue}
-                    onChange={(e) => setMiniRevenue(Number(e.target.value))}
-                    className="w-full h-1.5 bg-white/10 rounded-full accent-brand-primary appearance-none cursor-pointer" 
-                  />
+                  <input type="range" min="5000" max="50000" step="1000" value={miniRevenue} onChange={(e) => setMiniRevenue(Number(e.target.value))} className="w-full h-1.5 bg-white/10 rounded-full accent-brand-primary cursor-pointer" />
                   <div className="pt-4 border-t border-white/5">
                     <p className="text-[10px] text-gray-500 font-bold uppercase mb-1">Economia Estimada</p>
                     <p className="text-brand-success text-2xl font-black">R$ {taxSavings.toLocaleString('pt-BR')}</p>
                   </div>
-                  <button 
-                    onClick={() => handleCTA('blog-sidebar-calc')}
-                    className="w-full bg-brand-primary/10 border border-brand-primary/20 text-brand-primary hover:bg-brand-primary hover:text-white py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all"
-                  >
-                    Economizar Agora
+                  <button onClick={() => setCurrentPage('tool-fatorr')} className="w-full bg-brand-primary text-white py-4 rounded-xl font-black text-xs uppercase tracking-widest transition-all">
+                    Calcular Fator R
                   </button>
                </div>
             </div>
@@ -168,46 +231,16 @@ const BlogPostView: React.FC = () => {
                  <CheckCircle2 size={14} className="text-brand-primary" /> Sumário do Artigo
                </h4>
                <nav className="space-y-3">
-                  <a href="#intro" className="flex items-center gap-3 text-xs text-gray-400 hover:text-brand-primary transition-colors group">
+                  <a href="#intro" onClick={(e) => scrollToAnchor(e, 'intro')} className="flex items-center gap-3 text-xs text-gray-400 hover:text-brand-primary transition-colors group">
                     <div className="w-1 h-1 bg-gray-700 rounded-full group-hover:w-3 transition-all"></div>
-                    Introdução Técnica
+                    Introdução
                   </a>
-                  {post.id === 'inteligencia-artificial-fiscalizacao-2026' ? (
-                    <a href="#tecnologia" className="flex items-center gap-3 text-xs text-gray-400 hover:text-brand-primary transition-colors group">
-                      <div className="w-1 h-1 bg-gray-700 rounded-full group-hover:w-3 transition-all"></div>
-                      Avanços da Receita
-                    </a>
-                  ) : post.id === 'exportacao-servicos-devs-2026' ? (
-                    <a href="#impostos" className="flex items-center gap-3 text-xs text-gray-400 hover:text-brand-primary transition-colors group">
-                      <div className="w-1 h-1 bg-gray-700 rounded-full group-hover:w-3 transition-all"></div>
-                      Isenções de Exportação
-                    </a>
-                  ) : post.id === 'guia-definitivo-simples-nacional-2026' ? (
-                    <a href="#fatorr" className="flex items-center gap-3 text-xs text-gray-400 hover:text-brand-primary transition-colors group">
-                      <div className="w-1 h-1 bg-gray-700 rounded-full group-hover:w-3 transition-all"></div>
-                      Entendendo o Fator R
-                    </a>
-                  ) : (
-                    <a href="#publis" className="flex items-center gap-3 text-xs text-gray-400 hover:text-brand-primary transition-colors group">
-                      <div className="w-1 h-1 bg-gray-700 rounded-full group-hover:w-3 transition-all"></div>
-                      Análise de Publis
-                    </a>
-                  )}
-                  <a href="#conclusao" className="flex items-center gap-3 text-xs text-gray-400 hover:text-brand-primary transition-colors group">
+                  <a href="#conclusao" onClick={(e) => scrollToAnchor(e, 'conclusao')} className="flex items-center gap-3 text-xs text-gray-400 hover:text-brand-primary transition-colors group">
                     <div className="w-1 h-1 bg-gray-700 rounded-full group-hover:w-3 transition-all"></div>
-                    Conclusão e Diagnóstico
+                    Conclusão
                   </a>
                </nav>
             </div>
-
-            <div className="bg-brand-primary p-8 rounded-[2rem] text-white space-y-4 relative overflow-hidden group">
-               <Sparkles className="absolute -bottom-4 -right-4 w-24 h-24 text-white/10 group-hover:rotate-12 transition-transform" />
-               <h4 className="font-black text-lg leading-tight relative z-10">Receba estratégias fiscais no seu email.</h4>
-               <p className="text-white/70 text-xs relative z-10">Sem spam. Apenas atualizações que salvam o seu lucro.</p>
-               <input type="email" placeholder="Seu melhor e-mail" className="w-full bg-white/10 border border-white/20 rounded-xl px-4 py-3 text-sm placeholder:text-white/40 focus:outline-none focus:bg-white/20 relative z-10" />
-               <button className="w-full bg-white text-brand-primary py-3 rounded-xl font-black text-xs uppercase tracking-widest hover:scale-105 transition-transform relative z-10">Assinar</button>
-            </div>
-
           </aside>
         </div>
       </div>

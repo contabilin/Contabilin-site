@@ -57,8 +57,8 @@ const Footer: React.FC<FooterProps> = ({ onNavigate, socialMedia, logoUrl }) => 
                       </div>
                   </div>
                   <div className="flex flex-col">
-                    <span className="text-xl font-bold text-white leading-none text-brand-primary">Contabilin</span>
-                    <span className="text-[10px] text-gray-500 font-medium tracking-wider uppercase mt-1">Inteligência Fiscal</span>
+                    <span className="text-xl font-bold text-white leading-none">Contabilin</span>
+                    <span className="text-[10px] text-brand-primary font-medium tracking-wider uppercase mt-1">Contabilidade Inteligente</span>
                   </div>
                 </>
               )}
@@ -147,21 +147,20 @@ const Footer: React.FC<FooterProps> = ({ onNavigate, socialMedia, logoUrl }) => 
           </div>
         </div>
 
-        <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-[9px] md:text-[10px] text-gray-600 font-bold uppercase tracking-widest">
-            <div className="flex items-center gap-4">
-                <p className="text-center md:text-left">&copy; 2026 Contabilin. Inteligência Fiscal Digital.</p>
-                {/* Cadeado movido para a esquerda, longe do WhatsApp */}
+        <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-6 text-[9px] md:text-[10px] text-gray-600 font-bold uppercase tracking-widest">
+            <div className="flex flex-col md:flex-row items-center gap-4 text-center md:text-left">
+                <p>&copy; 2026 Contabilin Contabilidade Inteligente. Todos os direitos reservados.</p>
                 <button 
                     onClick={() => onNavigate('login')} 
-                    className="w-8 h-8 rounded-lg bg-white/5 flex items-center justify-center opacity-30 hover:opacity-100 hover:bg-brand-primary/20 hover:text-brand-primary transition-all border border-white/5"
+                    className="w-10 h-10 md:w-8 md:h-8 rounded-xl bg-white/5 flex items-center justify-center opacity-30 hover:opacity-100 hover:bg-brand-primary/20 hover:text-brand-primary transition-all border border-white/5 shrink-0"
                     title="Painel Admin"
                 >
-                    <Lock className="w-3.5 h-3.5" />
+                    <Lock className="w-4 h-4 md:w-3.5 md:h-3.5" />
                 </button>
             </div>
             
             <div className="hidden md:block opacity-40">
-                <span className="tracking-[0.2em]">Tecnologia & Estratégia</span>
+                <span className="tracking-[0.2em]">Tecnologia & Estratégia Fiscal</span>
             </div>
         </div>
       </div>

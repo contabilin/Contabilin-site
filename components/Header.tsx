@@ -1,6 +1,6 @@
 
 import React, { useState, startTransition } from 'react';
-import { Menu, X, Lightbulb, Brain, MessageCircle, ClipboardCheck } from 'lucide-react';
+import { Menu, X, Lightbulb, Brain, MessageCircle, ClipboardCheck, Lock } from 'lucide-react';
 import { SectionId, Page } from '../types';
 
 interface HeaderProps {
@@ -40,7 +40,7 @@ const Header: React.FC<HeaderProps> = ({ currentPage, onNavigate, logoUrl }) => 
                 </div>
                 <div className="flex flex-col">
                   <span className="text-2xl font-bold text-white tracking-tight leading-none">Contabilin</span>
-                  <span className="text-[10px] font-medium text-brand-primary tracking-widest uppercase">Inteligência Fiscal</span>
+                  <span className="text-[10px] font-medium text-brand-primary tracking-widest uppercase">Contabilidade Inteligente</span>
                 </div>
               </>
             )}
@@ -50,13 +50,14 @@ const Header: React.FC<HeaderProps> = ({ currentPage, onNavigate, logoUrl }) => 
           <nav className="hidden lg:flex space-x-8 items-center">
             <button onClick={() => handleNav('home', SectionId.SIMULATOR)} className="text-sm font-bold text-gray-300 hover:text-white transition-colors">Economia</button>
             <button onClick={() => handleNav('home', SectionId.PRICING)} className="text-sm font-bold text-gray-300 hover:text-white transition-colors">Planos</button>
+            <button onClick={() => handleNav('home', SectionId.TOOLS)} className="text-sm font-bold text-gray-300 hover:text-white transition-colors">Ferramentas</button>
             <button onClick={() => handleNav('blog')} className={`text-sm font-bold transition-colors ${currentPage === 'blog' ? 'text-brand-primary' : 'text-gray-300 hover:text-white'}`}>Blog</button>
             
             <button 
-              onClick={() => handleNav('login')}
-              className="bg-white/5 border border-white/10 text-white px-5 py-2.5 rounded-xl font-bold hover:bg-white/10 transition-all text-sm flex items-center gap-2"
+              onClick={() => handleNav('onboarding')}
+              className="bg-white/5 border border-white/10 text-white px-5 py-2.5 rounded-xl font-bold hover:bg-white/10 hover:border-brand-primary/30 transition-all text-sm flex items-center gap-2 group/diag"
             >
-              <ClipboardCheck className="w-4 h-4 text-brand-primary" /> Fazer Diagnóstico
+              <ClipboardCheck className="w-4 h-4 text-brand-primary group-hover/diag:animate-bounce" /> Fazer Diagnóstico
             </button>
 
             <button 
@@ -82,15 +83,27 @@ const Header: React.FC<HeaderProps> = ({ currentPage, onNavigate, logoUrl }) => 
           <div className="px-4 pt-2 pb-6 space-y-2">
             <button onClick={() => handleNav('home', SectionId.SIMULATOR)} className="block w-full text-left px-4 py-4 text-gray-300 font-bold border-b border-white/5">Calculadora de Economia</button>
             <button onClick={() => handleNav('home', SectionId.PRICING)} className="block w-full text-left px-4 py-4 text-gray-300 font-bold border-b border-white/5">Planos</button>
+            <button onClick={() => handleNav('home', SectionId.TOOLS)} className="block w-full text-left px-4 py-4 text-gray-300 font-bold border-b border-white/5 flex items-center gap-2">
+                Ferramentas
+            </button>
             <button onClick={() => handleNav('blog')} className="block w-full text-left px-4 py-4 text-gray-300 font-bold border-b border-white/5">Blog</button>
-            <button onClick={() => handleNav('login')} className="block w-full text-left px-4 py-4 text-brand-primary font-black border-b border-white/5 flex items-center gap-2">
+            <button onClick={() => handleNav('onboarding')} className="block w-full text-left px-4 py-4 text-brand-primary font-black border-b border-white/5 flex items-center gap-2">
                 <ClipboardCheck className="w-5 h-5" /> Iniciar Diagnóstico Fiscal
             </button>
+            
             <button 
               onClick={() => window.open('https://wa.me/5547989165863?text=Olá! Quero falar com um contador.', '_blank')}
               className="block w-full text-center mt-6 bg-[#25D366] text-white px-4 py-4 rounded-xl font-black text-lg"
             >
               Chamar no WhatsApp
+            </button>
+
+            {/* Acesso Admin Mobile */}
+            <button 
+              onClick={() => handleNav('login')}
+              className="flex items-center justify-center gap-2 w-full py-4 text-[10px] text-gray-600 font-black uppercase tracking-[0.2em] opacity-50 hover:opacity-100 transition-opacity mt-4"
+            >
+              <Lock className="w-3 h-3" /> Área Restrita Admin
             </button>
           </div>
         </div>

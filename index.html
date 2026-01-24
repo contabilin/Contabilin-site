@@ -1,11 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Contabilin | Inteligência Fiscal para o Mercado Digital</title>
-    <meta name="description" content="Contabilidade especializada em Infoprodutores, Devs e Agências. Reduza impostos de 15,5% para 6% com o Fator R.">
+    <title>Contabilin Contabilidade Inteligente | Estratégia para o Mercado Digital</title>
+    <meta name="description" content="Contabilidade especializada em Infoprodutores, Devs e Agências. Reduza impostos de 15,5% para 6% com a Contabilin.">
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -13,6 +12,7 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Instrument+Serif:italic&display=swap" rel="stylesheet">
+    
     <script>
       tailwind.config = {
         theme: {
@@ -28,9 +28,6 @@
                 accent: '#3b82f6',
                 success: '#10b981',
               }
-            },
-            backgroundImage: {
-              'grid-white': 'url("data:image/svg+xml,%3csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 32 32\' width=\'32\' height=\'32\' fill=\'none\' stroke=\'rgb(255 255 255 / 0.04)\'%3e%3cpath d=\'M0 .5H31.5V32\'/%3e%3c/svg%3e")',
             }
           }
         }
@@ -48,11 +45,7 @@
         position: absolute;
         width: 100%;
         height: 100%;
-        background: 
-          radial-gradient(at 0% 0%, rgba(139, 92, 246, 0.1) 0px, transparent 50%),
-          radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.1) 0px, transparent 50%),
-          radial-gradient(at 50% 100%, rgba(16, 185, 129, 0.05) 0px, transparent 50%);
-        filter: blur(80px);
+        background: radial-gradient(at 50% -20%, rgba(139, 92, 246, 0.15) 0%, transparent 70%);
         z-index: -1;
       }
 
@@ -60,21 +53,13 @@
         from { opacity: 0; transform: translateY(20px); }
         to { opacity: 1; transform: translateY(0); }
       }
-      .animate-fade-in-up { animation: fade-in-up 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+      .animate-fade-in-up { animation: fade-in-up 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
       
       .delay-100 { animation-delay: 0.1s; }
       .delay-200 { animation-delay: 0.2s; }
       .delay-300 { animation-delay: 0.3s; }
-      .delay-400 { animation-delay: 0.4s; }
 
-      .glass-card {
-        background: rgba(255, 255, 255, 0.03);
-        backdrop-filter: blur(12px);
-        border: 1px solid rgba(255, 255, 255, 0.08);
-      }
-
-      /* Custom Scrollbar */
-      ::-webkit-scrollbar { width: 6px; }
+      ::-webkit-scrollbar { width: 5px; }
       ::-webkit-scrollbar-track { background: #01040a; }
       ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
       ::-webkit-scrollbar-thumb:hover { background: #8b5cf6; }
@@ -97,6 +82,6 @@
   <body>
     <div class="mesh-glow"></div>
     <div id="root"></div>
-    <script type="module" src="./index.tsx"></script>
+    <script type="module" src="index.tsx"></script>
   </body>
 </html>
