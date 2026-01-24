@@ -1,12 +1,8 @@
 import React, { useEffect } from 'react';
 import { 
-  ArrowLeft, CheckCircle2, ShieldCheck, Zap, 
-  BarChart3, MessageCircle, FileText, 
-  Search, ClipboardCheck, Sparkles,
-  Users, Landmark, AlertCircle, Calendar,
-  Wallet, Gift, FileKey, UserPlus, Activity,
-  ChevronDown, TrendingUp, Info, Calculator, 
-  ArrowRight, Smartphone, Download, ArrowUpRight, Mail
+  CheckCircle2, ShieldCheck, Sparkles,
+  Activity, ChevronDown, ArrowRight,
+  ArrowUpRight, Mail, MessageCircle
 } from 'lucide-react';
 
 interface OnboardingProcessPageProps {
@@ -43,7 +39,7 @@ const OnboardingProcessPage: React.FC<OnboardingProcessPageProps> = ({ onBack, o
       <section className="relative pt-32 pb-16 overflow-hidden border-b border-white/5">
         <div className="max-w-4xl mx-auto px-6 relative z-10 text-center">
           
-          {/* Badge de Destaque (Baseado no seu desenho) */}
+          {/* Badge de Destaque */}
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-8 animate-fade-in-up relative group">
             <div className="absolute -top-3 -right-3 w-8 h-8 bg-brand-primary rounded-full flex items-center justify-center shadow-lg shadow-brand-primary/40 rotate-12 group-hover:rotate-0 transition-transform">
               <ArrowUpRight size={14} className="text-white" />
@@ -100,7 +96,7 @@ const OnboardingProcessPage: React.FC<OnboardingProcessPageProps> = ({ onBack, o
         </div>
       </section>
 
-      {/* SEÇÕES DE CONTEÚDO (ACORDO, SEPARAÇÃO, LUCROS, ROTINA, FERRAMENTAS) - COMPACTADAS */}
+      {/* SEÇÃO ACORDO (Resumida para brevidade) */}
       <section id="acordo" className="py-20 border-t border-white/5">
         <div className="max-w-5xl mx-auto px-6">
           <div className="text-center mb-12">
@@ -111,29 +107,29 @@ const OnboardingProcessPage: React.FC<OnboardingProcessPageProps> = ({ onBack, o
             <div className="bg-[#0f172a] p-8 rounded-[2.5rem] border border-brand-primary/20">
               <h3 className="text-white font-bold mb-4 flex items-center gap-2"><ShieldCheck className="text-brand-primary" /> Nossa Parte</h3>
               <ul className="space-y-3 text-sm text-gray-400">
-                <li className="flex gap-2">✔ Cálculo de impostos preciso.</li>
-                <li className="flex gap-2">✔ CNPJ 100% regular.</li>
-                <li className="flex gap-2">✔ Obrigações no prazo.</li>
+                <li className="flex gap-2"><CheckCircle2 className="w-4 h-4 text-brand-primary shrink-0" /> Cálculo de impostos preciso.</li>
+                <li className="flex gap-2"><CheckCircle2 className="w-4 h-4 text-brand-primary shrink-0" /> CNPJ 100% regular.</li>
+                <li className="flex gap-2"><CheckCircle2 className="w-4 h-4 text-brand-primary shrink-0" /> Obrigações sempre no prazo.</li>
               </ul>
             </div>
             <div className="bg-[#0f172a] p-8 rounded-[2.5rem] border border-white/5">
               <h3 className="text-white font-bold mb-4 flex items-center gap-2"><Activity className="text-brand-accent" /> Sua Parte</h3>
               <ul className="space-y-3 text-sm text-gray-400">
-                <li className="flex gap-2">✔ Envio de extratos e notas.</li>
-                <li className="flex gap-2">✔ Separação de contas PF e PJ.</li>
-                <li className="flex gap-2">✔ Comunicação de alterações.</li>
+                <li className="flex gap-2"><CheckCircle2 className="w-4 h-4 text-brand-accent shrink-0" /> Envio de extratos e notas.</li>
+                <li className="flex gap-2"><CheckCircle2 className="w-4 h-4 text-brand-accent shrink-0" /> Separação de contas PF e PJ.</li>
+                <li className="flex gap-2"><CheckCircle2 className="w-4 h-4 text-brand-accent shrink-0" /> Comunicar contratações/alterações.</li>
               </ul>
             </div>
           </div>
         </div>
       </section>
 
-      {/* SEÇÃO EQUIPE - EXATAMENTE COMO A IMAGEM REFERENCIADA */}
+      {/* SEÇÃO EQUIPE - EXATAMENTE COMO A IMAGEM DE REFERÊNCIA */}
       <section className="py-24 bg-[#01040a] border-t border-white/5">
          <div className="max-w-5xl mx-auto px-6">
             <div className="text-center mb-16">
                 <h2 className="text-4xl font-black text-white tracking-tighter mb-4 leading-tight">Estamos aqui por você</h2>
-                <p className="text-gray-500 text-base font-medium">Conheça quem cuida da saúde da sua empresa</p>
+                <p className="text-gray-400 text-base font-medium">Conheça quem cuida da saúde da sua empresa</p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto mb-16">
@@ -141,7 +137,7 @@ const OnboardingProcessPage: React.FC<OnboardingProcessPageProps> = ({ onBack, o
                  { name: 'Gisele', role: 'Contadora', img: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=400' },
                  { name: 'Iago', role: 'Contador', img: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=400' }
                ].map((m, i) => (
-                 <div key={i} className="bg-[#0b0f1a] border border-white/5 rounded-[2.5rem] p-10 flex flex-col items-center justify-center transition-all hover:border-brand-primary/20 group text-center shadow-2xl">
+                 <div key={i} className="bg-[#0b0f1a] border border-white/5 rounded-[2.5rem] p-12 flex flex-col items-center justify-center transition-all hover:border-brand-primary/20 group text-center shadow-2xl">
                     <div className="w-28 h-28 md:w-36 md:h-36 rounded-full overflow-hidden mb-8 border-4 border-[#1e293b] shadow-xl grayscale hover:grayscale-0 transition-all duration-500">
                        <img src={m.img} alt={m.name} className="w-full h-full object-cover" />
                     </div>
