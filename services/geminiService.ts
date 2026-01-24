@@ -1,7 +1,13 @@
-
 import { GoogleGenAI, Type } from "@google/genai";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+// Inicialização segura: a chave DEVE vir de process.env.API_KEY
+const getAiClient = () => {
+  const apiKey = process.env.API_KEY;
+  if (!apiKey) {
+    console.warn("Contabilin AI: Chave de API não configurada no ambiente.");
+  }
+  return new GoogleGenAI({ apiKey: apiKey || "" });
+};
 
 export const DEFAULT_SYSTEM_INSTRUCTION = `
 Você é o assistente virtual "Contabilin AI", especialista em INTELIGÊNCIA FISCAL para o MERCADO DIGITAL, parte da equipe Contabilin Contabilidade Inteligente.
@@ -17,6 +23,7 @@ DIRETRIZES:
 
 export const sendMessageToGemini = async (message: string, history: {role: 'user' | 'model', parts: {text: string}[]}[] = [], systemInstruction?: string): Promise<string> => {
   try {
+    const ai = getAiClient();
     const response = await ai.models.generateContent({
       model: 'gemini-3-flash-preview',
       contents: [
@@ -43,12 +50,16 @@ export const sendMessageToGemini = async (message: string, history: {role: 'user
     return text || "Desculpe, tive um problema ao processar. Pode tentar novamente?";
   } catch (error) {
     console.error("Chat error:", error);
+    if (error instanceof Error && error.message.includes("API Key")) {
+      return "Estou com uma instabilidade técnica na conexão. Por favor, fale com nossos especialistas no WhatsApp enquanto resolvemos isso!";
+    }
     return "Estou com uma instabilidade momentânea. Que tal falar com nossos especialistas no WhatsApp?";
   }
 };
 
 export const generateBlogPost = async (topic: string): Promise<any> => {
   try {
+    const ai = getAiClient();
     const response = await ai.models.generateContent({
       model: 'gemini-3-pro-preview',
       contents: `
