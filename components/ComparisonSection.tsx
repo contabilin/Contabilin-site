@@ -17,7 +17,7 @@ const ComparisonSection: React.FC = () => {
           {/* Lado Negativo: CPF / Autônomo */}
           <div className="relative group">
             <div className="absolute inset-0 bg-red-500/5 blur-3xl rounded-full opacity-0 group-hover:opacity-100 transition-opacity"></div>
-            <div className="relative bg-[#1e293b]/20 border border-red-500/10 rounded-[2.5rem] p-8 md:p-12 backdrop-blur-sm grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all">
+            <div className="relative bg-[#1e293b]/20 border border-red-500/10 rounded-[2.5rem] p-6 md:p-12 backdrop-blur-sm grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all">
               <div className="flex items-center gap-4 mb-8">
                 <div className="w-14 h-14 rounded-2xl bg-red-500/10 flex items-center justify-center">
                   <User className="w-8 h-8 text-red-500" />
@@ -57,7 +57,7 @@ const ComparisonSection: React.FC = () => {
           {/* Lado Positivo: Contabilin PJ */}
           <div className="relative group">
             <div className="absolute inset-0 bg-brand-primary/10 blur-3xl rounded-full opacity-100"></div>
-            <div className="relative bg-[#1e293b]/40 border border-brand-primary/30 rounded-[2.5rem] p-8 md:p-12 backdrop-blur-xl shadow-2xl shadow-brand-primary/10 ring-2 ring-brand-primary/20 scale-105">
+            <div className="relative bg-[#1e293b]/40 border border-brand-primary/30 rounded-[2.5rem] p-6 md:p-12 backdrop-blur-xl shadow-2xl shadow-brand-primary/10 ring-2 ring-brand-primary/20 scale-105">
               <div className="flex items-center gap-4 mb-8">
                 <div className="w-14 h-14 rounded-2xl bg-brand-primary/20 flex items-center justify-center">
                   <Building2 className="w-8 h-8 text-brand-primary" />

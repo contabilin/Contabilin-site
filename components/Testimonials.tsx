@@ -31,7 +31,7 @@ const Testimonials: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {testimonials.map((item, index) => (
-            <div key={index} className="glass-card p-8 rounded-2xl relative">
+            <div key={index} className="glass-card p-6 md:p-8 rounded-2xl relative">
               <div className="flex gap-1 mb-4">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} className="w-4 h-4 text-yellow-500 fill-yellow-500" />

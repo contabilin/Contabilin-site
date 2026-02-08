@@ -14,7 +14,7 @@ const TaxSimulator: React.FC<TaxSimulatorProps> = ({ onWhatsAppClick }) => {
     const annualRevenue = revenue * 12;
 
     // --- CÁLCULO PESSOA FÍSICA (CPF) ---
-    const inssTeto = 1600; 
+    const inssTeto = 1600;
     const inss = Math.min(revenue * 0.20, inssTeto);
     const baseIrpf = revenue - inss;
     let irpf = 0;
@@ -30,7 +30,7 @@ const TaxSimulator: React.FC<TaxSimulatorProps> = ({ onWhatsAppClick }) => {
     } else {
       irpf = (baseIrpf * 0.275) - 1312;
     }
-    
+
     const totalPf = Math.max(0, inss + irpf);
     const effectiveRatePf = (totalPf / revenue) * 100;
 
@@ -58,10 +58,10 @@ const TaxSimulator: React.FC<TaxSimulatorProps> = ({ onWhatsAppClick }) => {
       deduction = 648000;
     }
 
-    const effectiveRatePj = annualRevenue > 0 
-      ? ((annualRevenue * nominalRate) - deduction) / annualRevenue 
+    const effectiveRatePj = annualRevenue > 0
+      ? ((annualRevenue * nominalRate) - deduction) / annualRevenue
       : 0.06;
-    
+
     const totalPj = revenue * effectiveRatePj;
     const effectiveRatePjPercent = effectiveRatePj * 100;
 
@@ -105,7 +105,7 @@ const TaxSimulator: React.FC<TaxSimulatorProps> = ({ onWhatsAppClick }) => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 md:gap-8 items-stretch max-w-6xl mx-auto">
           {/* Lado Esquerdo: Input */}
-          <div className="bg-[#1e293b]/10 border border-white/5 rounded-3xl md:rounded-[2.5rem] p-6 md:p-12 flex flex-col justify-center">
+          <div className="bg-[#1e293b]/10 border border-white/5 rounded-3xl md:rounded-[2.5rem] p-5 md:p-12 flex flex-col justify-center">
             <div className="space-y-8 md:space-y-12">
               <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end gap-2">
                 <label className="text-gray-500 font-bold text-[10px] md:text-xs uppercase tracking-widest">Faturamento Mensal</label>
@@ -114,20 +114,20 @@ const TaxSimulator: React.FC<TaxSimulatorProps> = ({ onWhatsAppClick }) => {
                   <span className="text-4xl md:text-6xl font-black text-white">{revenue.toLocaleString('pt-BR')}</span>
                 </div>
               </div>
-              
+
               <div className="relative py-4">
-                <input 
-                  type="range" 
-                  min="5000" 
-                  max="200000" 
-                  step="1000" 
-                  value={revenue} 
-                  onChange={e => setRevenue(Number(e.target.value))} 
-                  className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-brand-primary" 
+                <input
+                  type="range"
+                  min="5000"
+                  max="200000"
+                  step="1000"
+                  value={revenue}
+                  onChange={e => setRevenue(Number(e.target.value))}
+                  className="w-full h-2 bg-white/10 rounded-lg appearance-none cursor-pointer accent-brand-primary"
                 />
                 <div className="flex justify-between mt-4 text-[9px] md:text-[10px] text-gray-600 font-bold uppercase tracking-widest">
-                    <span>R$ 5k</span>
-                    <span>R$ 200k+</span>
+                  <span>R$ 5k</span>
+                  <span>R$ 200k+</span>
                 </div>
               </div>
 
@@ -142,44 +142,44 @@ const TaxSimulator: React.FC<TaxSimulatorProps> = ({ onWhatsAppClick }) => {
 
           {/* Lado Direito: Resultado */}
           <div className="bg-gradient-to-br from-brand-primary/20 to-brand-accent/20 rounded-3xl md:rounded-[2.5rem] p-1 shadow-2xl">
-            <div className="bg-[#020617] h-full rounded-[1.8rem] md:rounded-[2.4rem] p-6 md:p-12 flex flex-col justify-between">
-               <div>
-                  <p className="text-brand-primary font-bold text-[9px] md:text-[10px] uppercase tracking-[0.2em] mb-3">Economia Anual Estimada</p>
-                  <h3 className="text-4xl sm:text-5xl md:text-7xl font-black text-white mb-2 tracking-tighter break-all">
-                    R$ {stats.annualSavings.toLocaleString('pt-BR')}
-                  </h3>
-                  
-                  <div className="flex items-start gap-2 md:gap-3 mb-8 md:mb-10 min-h-[50px]">
-                    <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-brand-primary shrink-0 mt-1" />
-                    <p className="text-xs md:text-base font-medium italic text-gray-300 leading-relaxed">
-                      {investmentIdea}
-                    </p>
-                  </div>
-                  
-                  <div className="space-y-2 md:space-y-4 mb-8 md:mb-12">
-                    <div className="flex justify-between items-center py-3 md:py-5 border-b border-white/5">
-                      <div className="flex flex-col">
-                        <span className="text-xs md:text-sm text-gray-500 font-medium">No CPF (Autônomo):</span>
-                        <span className="text-[9px] md:text-[10px] text-red-500 font-bold uppercase tracking-widest">{stats.ratePf}% Efetiva</span>
-                      </div>
-                      <span className="text-lg md:text-xl font-bold text-red-500/80">R$ {stats.pf.toLocaleString('pt-BR')}</span>
-                    </div>
-                    <div className="flex justify-between items-center py-3 md:py-5 border-b border-white/5">
-                      <div className="flex flex-col">
-                        <span className="text-xs md:text-sm text-gray-300 font-medium">Na Contabilin (PJ):</span>
-                        <span className="text-[9px] md:text-[10px] text-brand-primary font-bold uppercase tracking-widest">{stats.ratePj}% Efetiva</span>
-                      </div>
-                      <span className="text-lg md:text-xl font-bold text-brand-primary">R$ {stats.pj.toLocaleString('pt-BR')}</span>
-                    </div>
-                  </div>
-               </div>
+            <div className="bg-[#020617] h-full rounded-[1.8rem] md:rounded-[2.4rem] p-5 md:p-12 flex flex-col justify-between">
+              <div>
+                <p className="text-brand-primary font-bold text-[9px] md:text-[10px] uppercase tracking-[0.2em] mb-3">Economia Anual Estimada</p>
+                <h3 className="text-4xl sm:text-5xl md:text-7xl font-black text-white mb-2 tracking-tighter break-all">
+                  R$ {stats.annualSavings.toLocaleString('pt-BR')}
+                </h3>
 
-               <button 
-                  onClick={handleConsult} 
-                  className="w-full bg-brand-primary hover:bg-violet-600 text-white font-black py-4 md:py-6 rounded-2xl md:rounded-3xl shadow-xl transition-all flex items-center justify-center gap-2 md:gap-3 transform hover:-translate-y-1 text-base md:text-lg group"
-               >
-                 Migrar para a Contabilin <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
-               </button>
+                <div className="flex items-start gap-2 md:gap-3 mb-8 md:mb-10 min-h-[50px]">
+                  <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-brand-primary shrink-0 mt-1" />
+                  <p className="text-xs md:text-base font-medium italic text-gray-300 leading-relaxed">
+                    {investmentIdea}
+                  </p>
+                </div>
+
+                <div className="space-y-2 md:space-y-4 mb-8 md:mb-12">
+                  <div className="flex justify-between items-center py-3 md:py-5 border-b border-white/5">
+                    <div className="flex flex-col">
+                      <span className="text-xs md:text-sm text-gray-500 font-medium">No CPF (Autônomo):</span>
+                      <span className="text-[9px] md:text-[10px] text-red-500 font-bold uppercase tracking-widest">{stats.ratePf}% Efetiva</span>
+                    </div>
+                    <span className="text-lg md:text-xl font-bold text-red-500/80">R$ {stats.pf.toLocaleString('pt-BR')}</span>
+                  </div>
+                  <div className="flex justify-between items-center py-3 md:py-5 border-b border-white/5">
+                    <div className="flex flex-col">
+                      <span className="text-xs md:text-sm text-gray-300 font-medium">Na Contabilin (PJ):</span>
+                      <span className="text-[9px] md:text-[10px] text-brand-primary font-bold uppercase tracking-widest">{stats.ratePj}% Efetiva</span>
+                    </div>
+                    <span className="text-lg md:text-xl font-bold text-brand-primary">R$ {stats.pj.toLocaleString('pt-BR')}</span>
+                  </div>
+                </div>
+              </div>
+
+              <button
+                onClick={handleConsult}
+                className="w-full bg-brand-primary hover:bg-violet-600 text-white font-black py-4 md:py-6 rounded-2xl md:rounded-3xl shadow-xl transition-all flex items-center justify-center gap-2 md:gap-3 transform hover:-translate-y-1 text-base md:text-lg group"
+              >
+                Migrar para a Contabilin <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
+              </button>
             </div>
           </div>
         </div>
