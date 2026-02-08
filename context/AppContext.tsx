@@ -2,17 +2,19 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { BlogPost, SiteStats, WhatsAppConfig, PricingConfig, LeadMagnetConfig, SocialMediaConfig, Page, CapturedLead } from '../types';
 import { blogPosts as initialBlogPosts } from '../data/blogData';
+
 import { DEFAULT_SYSTEM_INSTRUCTION } from '../services/geminiService';
+import { blogService } from '../services/blogService';
 
 interface AppContextType {
   // Page State
   currentPage: Page;
   setCurrentPage: (page: Page) => void;
-  
+
   // Selection State
   selectedPost: BlogPost | null;
   setSelectedPost: (post: BlogPost | null) => void;
-  
+
   // Auth State
   isAdminAuthenticated: boolean;
   setIsAdminAuthenticated: (auth: boolean) => void;
@@ -30,7 +32,7 @@ interface AppContextType {
   setSocialMediaConfig: (config: SocialMediaConfig) => void;
   waConfig: WhatsAppConfig;
   setWaConfig: (config: WhatsAppConfig) => void;
-  
+
   // AI State
   aiInstruction: string;
   setAiInstruction: (instruction: string) => void;
@@ -46,7 +48,7 @@ interface AppContextType {
   setFbPixelId: (id: string) => void;
   googleAdsId: string;
   setGoogleAdsId: (id: string) => void;
-  
+
   // Stats
   siteStats: SiteStats;
   trackSectionClick: (section: string) => void;
@@ -69,8 +71,37 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState(false);
   const [adminPassword, setAdminPassword] = useState(() => localStorage.getItem('contabilin_admin_pass') || '123');
-  
-  const [posts, setPosts] = useState<BlogPost[]>(() => getStored('contabilin_posts', initialBlogPosts));
+
+  const [posts, setPosts] = useState<BlogPost[]>([]);
+
+  // Fetch posts from local API
+  useEffect(() => {
+    fetch('http://localhost:3001/api/posts')
+      .then(res => res.json())
+      .then(data => {
+        if (Array.isArray(data) && data.length > 0) {
+          setPosts(data);
+        } else {
+          // Fallback if empty or error
+          setPosts(initialBlogPosts);
+        }
+      })
+      .catch(err => {
+        console.error('Failed to load posts from API:', err);
+        setPosts(initialBlogPosts);
+      });
+  }, []);
+
+  // Sync posts to API whenever they change
+  useEffect(() => {
+    if (posts.length > 0) {
+      fetch('http://localhost:3001/api/posts', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(posts)
+      }).catch(err => console.error('Failed to save posts:', err));
+    }
+  }, [posts]);
   const [pricingConfig, setPricingConfig] = useState<PricingConfig>(() => getStored('contabilin_pricing', { meiPrice: 157, meBase10k: 347, meBase20k: 447, meBase30k: 547, meBase50k: 647, meExcessStep: 100, employeePrice: 50 }));
   const [leadMagnetConfig, setLeadMagnetConfig] = useState<LeadMagnetConfig>(() => getStored('contabilin_lead_magnet_config', { title: 'Guia Fiscal 2026', description: 'Reduza impostos.', buttonText: 'Baixar', badge: 'Grátis', footer: 'Contabilin', isEnabled: true, downloadUrl: '#' }));
   const [socialMediaConfig, setSocialMediaConfig] = useState<SocialMediaConfig>(() => getStored('contabilin_social_config', { instagram: '', linkedin: '', youtube: '', facebook: '', tiktok: '', twitter: '', threads: '', telegram: '', discord: '', behance: '', pinterest: '', p1Name: 'Iago', p1Instagram: '', p2Name: 'Gisele', p2Instagram: '' } as any));
@@ -81,11 +112,11 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   const [gscCode, setGscCode] = useState(() => localStorage.getItem('contabilin_gsc_code') || '');
   const [fbPixelId, setFbPixelId] = useState(() => localStorage.getItem('contabilin_fb_pixel') || '');
   const [googleAdsId, setGoogleAdsId] = useState(() => localStorage.getItem('contabilin_google_ads') || '');
-  
-  const [siteStats, setSiteStats] = useState<SiteStats>(() => getStored('contabilin_site_stats', { 
-    wa: { total: 0, byOrigin: { hero: 0, floating: 0, pricing: 0, simulator: 0, footer: 0, blog: 0, leadMagnet: 0 } }, 
-    sectionClicks: {}, 
-    articleViews: {}, 
+
+  const [siteStats, setSiteStats] = useState<SiteStats>(() => getStored('contabilin_site_stats', {
+    wa: { total: 0, byOrigin: { hero: 0, floating: 0, pricing: 0, simulator: 0, footer: 0, blog: 0, leadMagnet: 0 } },
+    sectionClicks: {},
+    articleViews: {},
     totalViews: 0,
     leads: []
   }));
@@ -93,7 +124,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Persistence
   useEffect(() => {
     localStorage.setItem('contabilin_current_page', JSON.stringify(currentPage));
-    localStorage.setItem('contabilin_posts', JSON.stringify(posts));
+    // Posts are now synced via API, removed localStorage sync for posts
     localStorage.setItem('contabilin_pricing', JSON.stringify(pricingConfig));
     localStorage.setItem('contabilin_lead_magnet_config', JSON.stringify(leadMagnetConfig));
     localStorage.setItem('contabilin_social_config', JSON.stringify(socialMediaConfig));
@@ -138,10 +169,10 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }));
   }, []);
 
-  const resetStats = () => setSiteStats({ 
-    wa: { total: 0, byOrigin: { hero: 0, floating: 0, pricing: 0, simulator: 0, footer: 0, blog: 0, leadMagnet: 0 } }, 
-    sectionClicks: {}, 
-    articleViews: {}, 
+  const resetStats = () => setSiteStats({
+    wa: { total: 0, byOrigin: { hero: 0, floating: 0, pricing: 0, simulator: 0, footer: 0, blog: 0, leadMagnet: 0 } },
+    sectionClicks: {},
+    articleViews: {},
     totalViews: 0,
     leads: []
   });
